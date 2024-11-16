@@ -1,21 +1,19 @@
-# Base image
-FROM node:18
+FROM node:lts-buster
 
-# Set the working directory
-WORKDIR /usr/src/app
+RUN apt-get update && \
+  apt-get install -y \
+  ffmpeg \
+  imagemagick \
+  webp && \
+  apt-get upgrade -y && \
+  rm -rf /var/lib/apt/lists/*
 
-# Copy package files and install dependencies
-COPY package*.json ./
-RUN npm install
+COPY package.json .
 
-# Copy the rest of the application files
+RUN npm install && npm install qrcode-terminal
+
 COPY . .
 
-# Expose the port the bot will run on (if needed)
-EXPOSE 3000
+EXPOSE 5000
 
-# Environment variables (optional)
-# ENV VARIABLE_NAME=value
-
-# Run the bot
 CMD ["node", "index.js"]
